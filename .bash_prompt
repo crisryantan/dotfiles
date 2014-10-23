@@ -62,5 +62,6 @@ function git_info() {
 	echo -e $branch$dirty" "
 }
 
-export PS1="\n\[$BLUE\]\w\[$RESET\]\n\$([[ -n \$(git branch 2> /dev/null) ]] && echo \"\[$PURPLE\]⭠ \")\$(git_info)\[$WHITE\]λ\[$RESET\] "
+
+export PS1="\n\[$BLUE\]\w\[$RESET\]\n\$([[ -n \$(git branch 2> /dev/null) ]] && echo \"\[$PURPLE\] \")\$(git_info)\[$WHITE\] :\[$RESET\] "
 export PS2="\[$ORANGE\]→ \[$RESET\]"
