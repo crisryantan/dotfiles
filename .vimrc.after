@@ -4,7 +4,6 @@ set mouse=a
 
 " Default colorscheme
 set background=light
-color PaperColor
 
 " Make Vim more useful
 set nocompatible
