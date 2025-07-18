@@ -1,0 +1,49 @@
+# Zsh configuration template for dotfiles
+# This file should be appended to your existing .zshrc or used as a starting point
+
+# === Dotfiles Configuration ===
+# Load bash-based dotfiles in zsh
+
+# Add ~/bin to PATH
+export PATH="$HOME/bin:$PATH"
+
+# Load shell dotfiles
+# * ~/.path can be used to extend `$PATH`.
+# * ~/.extra can be used for other settings you don't want to commit.
+for file in ~/.{path,exports,aliases,functions,extra}; do
+    [ -r "$file" ] && [ -f "$file" ] && source "$file"
+done
+unset file
+
+# Load z (smart cd)
+[ -f ~/.bin/z/z.sh ] && source ~/.bin/z/z.sh
+
+# Enable zsh options for bash compatibility
+setopt AUTO_CD           # cd by typing directory name
+setopt GLOB_STAR_SHORT   # ** for recursive globbing  
+setopt NO_CASE_GLOB      # case insensitive globbing
+setopt APPEND_HISTORY    # append to history file
+setopt HIST_IGNORE_DUPS  # ignore duplicate commands
+setopt CORRECT           # command correction
+
+# Enable prompt substitution
+setopt PROMPT_SUBST
+
+# Git info function for prompt
+git_info() {
+    git rev-parse --is-inside-work-tree &>/dev/null || return
+    local branch=$(git symbolic-ref -q HEAD | sed -e 's|^refs/heads/||')
+    local dirty=$(git diff --quiet --ignore-submodules HEAD &>/dev/null; [ $? -eq 1 ] && echo "*")
+    echo -e "$branch$dirty "
+}
+
+# Zsh prompt (similar to bash prompt)
+PROMPT='
+%F{blue}%~%f
+$(git rev-parse --is-inside-work-tree &>/dev/null && echo "%F{magenta}🐶  %f")$(git_info)%F{white}:%f '
+
+PROMPT2='%F{yellow}→ %f'
+
+# === End Dotfiles Configuration ===
+
+# Add your own customizations below this line 
