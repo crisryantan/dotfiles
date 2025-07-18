@@ -12,10 +12,42 @@ A collection of dotfiles and scripts for setting up a development environment wi
 
 ## Installation
 
+### SSH Setup (Recommended)
+
+For seamless Git operations, set up SSH authentication with GitHub:
+
+```bash
+# If you already have the dotfiles repository:
+cd ~/.dotfiles
+./scripts/setup-ssh.sh
+
+# Or manually:
+ssh-keygen -t ed25519 -C "your_email@example.com"
+eval "$(ssh-agent -s)"
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+mkdir -p ~/.ssh
+cat > ~/.ssh/config << 'EOF'
+# GitHub SSH Configuration
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentitiesOnly yes
+EOF
+pbcopy < ~/.ssh/id_ed25519.pub
+```
+
+Then add the SSH key to your GitHub account:
+1. Go to GitHub → Settings → SSH and GPG keys
+2. Click "New SSH key"
+3. Paste your key and save
+
 ### Quick Install (Recommended)
 
 ```bash
-git clone https://github.com/crisryantan/dotfiles.git ~/.dotfiles
+git clone git@github.com:crisryantan/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 ./install.sh
 ```
@@ -33,7 +65,7 @@ If you prefer to install components separately:
 
 ```bash
 # Clone the repository
-git clone https://github.com/crisryantan/dotfiles.git ~/.dotfiles
+git clone git@github.com:crisryantan/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 
 # Install dependencies
@@ -125,6 +157,33 @@ source ~/.bash_profile  # For bash
 source ~/.zshrc  # For zsh
 ```
 
+### SSH Authentication Issues
+
+If you see "You've successfully authenticated, but GitHub does not provide shell access" when testing your SSH connection, this is normal. It means your SSH key is working correctly with GitHub.
+
+If you're having issues with Git operations:
+
+1. Ensure your SSH key is added to the agent:
+   ```bash
+   eval "$(ssh-agent -s)"
+   ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+   ```
+
+2. Verify your SSH connection:
+   ```bash
+   ssh -T git@github.com
+   ```
+
+3. Check your repository's remote URL:
+   ```bash
+   git remote -v
+   ```
+
+4. If using HTTPS, switch to SSH:
+   ```bash
+   git remote set-url origin git@github.com:username/repository.git
+   ```
+
 ## What's Included
 
 ### Dotfiles
@@ -143,6 +202,7 @@ source ~/.zshrc  # For zsh
 - `.zshrc.template` - Zsh configuration template
 - `scripts/healthcheck.sh` - Verifies correct installation
 - `scripts/vim-fixes.sh` - Fixes Vim/Janus compatibility issues
+- `scripts/setup-ssh.sh` - Sets up SSH for GitHub authentication
 
 ## Customization
 
