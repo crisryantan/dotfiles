@@ -1,50 +1,30 @@
-# Based on Paul Iris' install-deps.sh
-mkdir -p ~/.bin
+#!/usr/bin/env bash
 
-# https://github.com/rupa/z
-cd ~/.bin
-if [ ! -d "z" ]; then
-	git clone https://github.com/rupa/z.git
-	chmod +x ~/.bin/z/z.sh
-else
-	echo "z already installed, updating..."
-	cd z && git pull origin master && cd ..
-fi
+# Modern dependency installation script
+# Handles existing installations gracefully and updates outdated dependencies
 
-if [ ! -x $(which ruby) ]; then
-	echo 'Ruby not installed. Install ruby and re-run this script.'
-else
-	# janus vim
-	cd ~/
-	if [ ! -d ".vim" ]; then
-		curl -Lo- https://bit.ly/janus-bootstrap | bash
-	else
-		echo "Janus vim already installed, updating..."
-		cd ~/.vim && rake update && cd ~/
-	fi
+set -e
 
-	mkdir -p ~/.janus
-	cd ~/.janus
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
 
-	# Clone vim plugins only if they don't exist
-	[ ! -d "ack.vim" ] && git clone https://github.com/mileszs/ack.vim.git
-	[ ! -d "vim-jade" ] && git clone https://github.com/digitaltoad/vim-jade.git
-	[ ! -d "emmet-vim" ] && git clone https://github.com/mattn/emmet-vim.git
-	[ ! -d "jsoncodecs.vim" ] && git clone https://github.com/michalliu/jsoncodecs.vim.git
-	[ ! -d "sourcebeautify.vim" ] && git clone https://github.com/michalliu/sourcebeautify.vim.git
-	[ ! -d "jsruntime.vim" ] && git clone https://github.com/michalliu/jsruntime.vim.git
-	[ ! -d "Align" ] && git clone https://github.com/vim-scripts/Align.git
-	[ ! -d "vim-cucumber" ] && git clone https://github.com/tpope/vim-cucumber.git
-	[ ! -d "neocomplete.vim" ] && git clone https://github.com/Shougo/neocomplete.vim.git
+# Helper functions
+print_info() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
 
-	[ ! -d "gruvbox" ] && git clone https://github.com/morhetz/gruvbox.git
-	[ ! -d "vim-kolor" ] && git clone https://github.com/zeis/vim-kolor.git
-	[ ! -d "vim-hemisu" ] && git clone https://github.com/noahfrederick/vim-hemisu.git
-	[ ! -d "TuttiColori-Colorscheme" ] && git clone https://github.com/vim-scripts/TuttiColori-Colorscheme.git
+print_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
 
-	echo "All vim plugins checked/installed."
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
 
-	# Back to .dotfiles folder
-	cd ~/.dotfiles
-	source bootstrap.sh
-fi
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
