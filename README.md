@@ -45,13 +45,30 @@ cd ~/.dotfiles
 
 ### For Zsh Users
 
-If you're using zsh (default on modern macOS), the installer will automatically configure it to work with these bash-based dotfiles. 
+If you're using zsh (default on modern macOS), the installer will automatically configure it to work with these dotfiles.
 
 To manually add the configuration, append the contents of `.zshrc.template` to your `~/.zshrc`:
 
 ```bash
 cat ~/.dotfiles/.zshrc.template >> ~/.zshrc
+source ~/.zshrc
 ```
+
+### Verifying Installation
+
+After installation, run the health check script to verify everything is set up correctly:
+
+```bash
+cd ~/.dotfiles
+./scripts/healthcheck.sh
+```
+
+The script will check for:
+- Proper shell configuration
+- Installed dependencies
+- Git configuration
+- Working aliases
+- And more!
 
 ## Troubleshooting
 
@@ -66,7 +83,7 @@ line   77: E1208: -complete used without allowing arguments
 Run the fix script:
 ```bash
 cd ~/.dotfiles
-./fix-vim-issues.sh
+./scripts/vim-fixes.sh
 ```
 
 ### Alternative Solutions for Git Editor
@@ -90,6 +107,24 @@ If you get "directory already exists" errors when running `.dep.sh`, this means 
 - Run `./install.sh` which handles existing installations gracefully
 - Or run `./bootstrap.sh` directly to just update your dotfiles
 
+### Missing Dependencies
+
+If the `z` command doesn't work after installation, try:
+
+```bash
+# Manually install z
+mkdir -p ~/.bin
+git clone https://github.com/rupa/z.git ~/.bin/z
+echo '. ~/.bin/z/z.sh' >> ~/.bash_profile  # For bash
+# OR
+echo '. ~/.bin/z/z.sh' >> ~/.zshrc  # For zsh
+
+# Then reload your shell
+source ~/.bash_profile  # For bash
+# OR
+source ~/.zshrc  # For zsh
+```
+
 ## What's Included
 
 ### Dotfiles
@@ -105,8 +140,9 @@ If you get "directory already exists" errors when running `.dep.sh`, this means 
 - `install.sh` - Modern installation script with shell detection
 - `.dep.sh` - Dependency installation (z, vim plugins)
 - `bootstrap.sh` - Copies dotfiles to home directory
-- `fix-vim-issues.sh` - Fixes Vim/Janus compatibility issues
 - `.zshrc.template` - Zsh configuration template
+- `scripts/healthcheck.sh` - Verifies correct installation
+- `scripts/vim-fixes.sh` - Fixes Vim/Janus compatibility issues
 
 ## Customization
 

@@ -8,8 +8,6 @@
 export PATH="$HOME/bin:$PATH"
 
 # Load shell dotfiles
-# * ~/.path can be used to extend `$PATH`.
-# * ~/.extra can be used for other settings you don't want to commit.
 for file in ~/.{path,exports,aliases,functions,extra}; do
     [ -r "$file" ] && [ -f "$file" ] && source "$file"
 done
@@ -20,7 +18,7 @@ unset file
 
 # Enable zsh options for bash compatibility
 setopt AUTO_CD           # cd by typing directory name
-setopt GLOB_STAR_SHORT   # ** for recursive globbing  
+setopt GLOB_STAR_SHORT   # ** for recursive globbing
 setopt NO_CASE_GLOB      # case insensitive globbing
 setopt APPEND_HISTORY    # append to history file
 setopt HIST_IGNORE_DUPS  # ignore duplicate commands
@@ -29,7 +27,7 @@ setopt CORRECT           # command correction
 # Enable prompt substitution
 setopt PROMPT_SUBST
 
-# Git info function for prompt
+# Git info function
 git_info() {
     git rev-parse --is-inside-work-tree &>/dev/null || return
     local branch=$(git symbolic-ref -q HEAD | sed -e 's|^refs/heads/||')
@@ -43,6 +41,36 @@ PROMPT='
 $(git rev-parse --is-inside-work-tree &>/dev/null && echo "%F{magenta}🐶  %f")$(git_info)%F{white}:%f '
 
 PROMPT2='%F{yellow}→ %f'
+
+# History configuration
+HISTSIZE=10000
+SAVEHIST=10000
+HISTFILE=~/.zsh_history
+
+# Completion system
+autoload -Uz compinit
+compinit
+
+# Tab completion from both ends
+setopt COMPLETE_IN_WORD
+
+# Better completion with menu
+zstyle ':completion:*' menu select
+
+# Case insensitive completion
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+
+# Color ls output
+export CLICOLOR=1
+export LSCOLORS=ExFxBxDxCxegedabagacad
+
+# Key bindings
+bindkey -e  # Use emacs key bindings
+bindkey '^[[A' up-line-or-search
+bindkey '^[[B' down-line-or-search
+bindkey '^[[H' beginning-of-line
+bindkey '^[[F' end-of-line
+bindkey '^[[3~' delete-char
 
 # === End Dotfiles Configuration ===
 

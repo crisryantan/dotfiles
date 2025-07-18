@@ -81,12 +81,20 @@ main() {
     
     # Fix Vim issues
     print_info "Checking Vim configuration..."
-    fix_vim_issues
+    if [ -f "./scripts/vim-fixes.sh" ]; then
+        ./scripts/vim-fixes.sh
+    else
+        print_warning "Vim fixes script not found, skipping"
+    fi
     
     # Run health check
     print_info "Running health check..."
-    if [ -f "./healthcheck.sh" ]; then
+    if [ -f "./scripts/healthcheck.sh" ]; then
+        ./scripts/healthcheck.sh
+    elif [ -f "./healthcheck.sh" ]; then
         ./healthcheck.sh
+    else
+        print_warning "Health check script not found, skipping"
     fi
     
     print_success "Installation complete!"
@@ -161,17 +169,15 @@ EOF
     print_success "Zsh configuration added"
 }
 
-# Fix common Vim issues
+# This function is deprecated - we now use scripts/vim-fixes.sh instead
+# Kept for backward compatibility
 fix_vim_issues() {
-    local VIM_PLUGIN="/Users/$USER/.vim/janus/vim/tools/tlib/plugin/02tlib.vim"
-    
-    if [ -f "$VIM_PLUGIN" ]; then
-        # Fix the E1208 error
-        if grep -q "command! -nargs=0 -complete=command TBrowseScriptnames" "$VIM_PLUGIN" 2>/dev/null; then
-            print_info "Fixing Vim plugin compatibility issue..."
-            sed -i.bak 's/command! -nargs=0 -complete=command TBrowseScriptnames/command! -nargs=0 TBrowseScriptnames/' "$VIM_PLUGIN"
-            print_success "Vim issue fixed"
-        fi
+    if [ -f "./scripts/vim-fixes.sh" ]; then
+        ./scripts/vim-fixes.sh
+    elif [ -f "./fix-vim-issues.sh" ]; then
+        ./fix-vim-issues.sh
+    else
+        print_warning "No Vim fixes script found"
     fi
 }
 
