@@ -60,6 +60,34 @@ zstyle ':completion:*' menu select
 # Case insensitive completion
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 
+# Z command completion
+_z() {
+    local -a dirs
+    local dir basename_dir
+    
+    # Get list of directories from z database
+    if [ -f "$HOME/.z" ]; then
+        while IFS='|' read -r dir _ _; do
+            if [ -d "$dir" ]; then
+                basename_dir=$(basename "$dir")
+                dirs+=("$basename_dir")
+            fi
+        done < "$HOME/.z"
+    fi
+    
+    # Add common directories
+    dirs+=("Desktop" "Documents" "Downloads" "Pictures" "Music" "Videos")
+    
+    # Remove duplicates and sort
+    dirs=($(printf '%s\n' "${dirs[@]}" | sort -u))
+    
+    # Complete with directory names
+    _describe 'directories' dirs
+}
+
+# Register completion for z command
+compdef _z z
+
 # Color ls output
 export CLICOLOR=1
 export LSCOLORS=ExFxBxDxCxegedabagacad
