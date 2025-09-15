@@ -1,6 +1,9 @@
 # Make vim the default editor
 export EDITOR="vim"
 
+# Ensure local bin is in PATH
+export PATH="$HOME/.bin:$PATH"
+
 # Larger bash history (allow 32³ entries; default is 500)
 export HISTSIZE=32768
 export HISTFILESIZE=$HISTSIZE
@@ -18,8 +21,7 @@ export LESS_TERMCAP_md="$ORANGE"
 # Don’t clear the screen after quitting a manual page
 export MANPAGER="less -X"
 
-# Always enable colored `grep` output
-export GREP_OPTIONS="--color=auto"
+# GREP_OPTIONS is deprecated in modern grep; prefer explicit flags or GREP_COLORS
 
 # Link Homebrew casks in `/Applications` rather than `~/Applications`
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"

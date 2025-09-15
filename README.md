@@ -7,7 +7,7 @@ A collection of dotfiles and scripts for setting up a development environment wi
 - 🎨 Beautiful terminal prompt with git integration
 - 🚀 Smart directory navigation with `z`
 - ⚡ Useful aliases and functions
-- 🔧 Vim configuration with Janus
+- 🔧 Minimal Vim/Neovim configuration (vim-plug optional)
 - 💻 Support for both bash and zsh shells
 
 ## Installation
@@ -54,7 +54,7 @@ cd ~/.dotfiles
 
 The `install.sh` script will:
 - Detect your shell (bash/zsh) and configure accordingly
-- Install dependencies (z, vim plugins)
+- Install dependencies (z, vim-plug)
 - Copy dotfiles to your home directory
 - Fix common compatibility issues
 - Set up your terminal prompt
@@ -71,7 +71,7 @@ If you prefer to install components separately:
 git clone git@github.com:crisryantan/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 
-# Install dependencies
+# Install dependencies (z, vim-plug)
 ./.dep.sh
 
 # Copy dotfiles to home directory
@@ -124,21 +124,7 @@ If your terminal doesn't seem to have the dotfiles configuration after running `
 
 > **This issue has been fixed in the latest version** - the installer now automatically configures zsh and reloads the configuration.
 
-### Git Commit Vim Error (E1208)
-
-If you see this error when running `git commit`:
-```
-Error detected while processing /Users/ryan.tan/.vim/janus/vim/tools/tlib/plugin/02tlib.vim:
-line   77: E1208: -complete used without allowing arguments
-```
-
-Run the fix script:
-```bash
-cd ~/.dotfiles
-./scripts/vim-fixes.sh
-```
-
-### Alternative Solutions for Git Editor
+### Git Editor Options
 
 If you continue to have issues with Vim, you can use a different editor for git:
 
@@ -150,7 +136,7 @@ git config --global core.editor "code --wait"
 git config --global core.editor "nano"
 
 # Use minimal vim (without plugins)
-git config --global core.editor "vim -u ~/.vimrc.minimal"
+git config --global core.editor "vim -u ~/.vimrc"
 ```
 
 ### Existing Installation Errors
@@ -213,15 +199,16 @@ If you're having issues with Git operations:
 - `.functions` - Shell functions
 - `.exports` - Environment variables
 - `.gitconfig` - Git configuration
-- `.vimrc.after` / `.vimrc.before` - Vim customizations
+- `.vimrc` - Minimal Vim config (optional vim-plug block)
+- `.config/nvim/init.vim` - Minimal Neovim config
 
 ### Scripts
 - `install.sh` - Modern installation script with shell detection
-- `.dep.sh` - Dependency installation (z, vim plugins)
+- `.dep.sh` - Dependency installation (z, vim-plug)
 - `bootstrap.sh` - Copies dotfiles to home directory
 - `.zshrc.template` - Zsh configuration template
 - `scripts/healthcheck.sh` - Verifies correct installation
-- `scripts/vim-fixes.sh` - Fixes Vim/Janus compatibility issues
+- `scripts/macos-setup.sh` - Safe macOS defaults setup
 - `scripts/setup-ssh.sh` - Sets up SSH for GitHub authentication
 
 ## Customization
@@ -266,7 +253,7 @@ git pull origin master
 
 - **OS**: macOS, Linux
 - **Shells**: bash, zsh
-- **Vim**: 7.0+ (some plugins may require 8.0+)
+- **Editors**: Vim 8+, Neovim 0.7+
 
 ## Credits
 

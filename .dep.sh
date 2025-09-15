@@ -53,23 +53,32 @@ install_z() {
     fi
 }
 
-# Install Janus (Vim distribution)
-install_janus() {
-    if [ -d "$HOME/.vim/janus" ]; then
-        print_info "Janus already installed, updating..."
-        cd "$HOME/.vim"
-        rake
-        cd - > /dev/null
-        print_success "Janus updated"
-    else
-        print_info "Installing Janus vim distribution..."
-        if command -v curl > /dev/null && command -v ruby > /dev/null && command -v rake > /dev/null; then
-            curl -L https://bit.ly/janus-bootstrap | bash
-            print_success "Janus installed"
+# Install vim-plug for Vim and Neovim
+install_vim_plug() {
+    if command -v curl > /dev/null 2>&1; then
+        # Vim
+        if [ ! -f "$HOME/.vim/autoload/plug.vim" ]; then
+            print_info "Installing vim-plug for Vim..."
+            curl -fLo "$HOME/.vim/autoload/plug.vim" --create-dirs \
+                https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+            print_success "vim-plug (Vim) installed"
         else
-            print_warning "Skipping Janus installation: curl, ruby or rake not found"
-            print_info "To install Janus manually later, run: curl -L https://bit.ly/janus-bootstrap | bash"
+            print_info "vim-plug (Vim) already installed"
         fi
+        # Neovim
+        if command -v nvim > /dev/null 2>&1; then
+            local NVIM_PLUG_PATH="$HOME/.local/share/nvim/site/autoload/plug.vim"
+            if [ ! -f "$NVIM_PLUG_PATH" ]; then
+                print_info "Installing vim-plug for Neovim..."
+                curl -fLo "$NVIM_PLUG_PATH" --create-dirs \
+                    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+                print_success "vim-plug (Neovim) installed"
+            else
+                print_info "vim-plug (Neovim) already installed"
+            fi
+        fi
+    else
+        print_warning "curl not found; skipping vim-plug installation"
     fi
 }
 
@@ -79,11 +88,11 @@ print_info "Installing dependencies..."
 # Install z
 install_z
 
-# Install Janus if vim is available
-if command -v vim > /dev/null; then
-    install_janus
+# Install vim-plug if Vim or Neovim is available
+if command -v vim > /dev/null || command -v nvim > /dev/null; then
+    install_vim_plug
 else
-    print_warning "Vim not found, skipping Janus installation"
+    print_warning "Vim/Neovim not found, skipping vim-plug installation"
 fi
 
 print_success "Dependencies installed!"

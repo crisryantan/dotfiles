@@ -76,4 +76,4 @@
 	insteadOf = "gist:"
 
 [push]
-	default = matching
+	default = simple

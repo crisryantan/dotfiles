@@ -90,28 +90,29 @@ else
     echo -e "$CROSS z command not available (restart shell or source rc file)"
 fi
 
-# Check Vim
+# Check Vim/Neovim
+VIM_FOUND=false
 if command_exists vim; then
     VIM_VERSION=$(vim --version | head -1)
     echo -e "$CHECK Vim installed: $VIM_VERSION"
-    
-    # Check for Janus
-    if dir_exists "$HOME/.vim/janus"; then
-        echo -e "$CHECK Janus vim distribution installed"
-        
-        # Check for the E1208 fix
-        TLIB_FILE="$HOME/.vim/janus/vim/tools/tlib/plugin/02tlib.vim"
-        if file_exists "$TLIB_FILE" && ! grep -q "command! -nargs=0 -complete=command" "$TLIB_FILE" 2>/dev/null; then
-            echo -e "$CHECK Vim E1208 error fixed"
-        else
-            echo -e "$CROSS Vim E1208 error not fixed"
-            echo -e "  ${YELLOW}Run: ./scripts/vim-fixes.sh${NC}"
-        fi
-    else
-        echo -e "$CROSS Janus not installed (optional)"
-    fi
+    VIM_FOUND=true
+fi
+if command_exists nvim; then
+    NVIM_VERSION=$(nvim --version | head -1)
+    echo -e "$CHECK Neovim installed: $NVIM_VERSION"
+    VIM_FOUND=true
+fi
+if [ "$VIM_FOUND" = false ]; then
+    echo -e "$CROSS Vim/Neovim not installed (optional)"
+fi
+
+# Check for vim-plug presence
+if [ -f "$HOME/.vim/autoload/plug.vim" ] || [ -f "$HOME/.local/share/nvim/site/autoload/plug.vim" ]; then
+    echo -e "$CHECK vim-plug installed"
 else
-    echo -e "$CROSS Vim not installed"
+    echo -e "$CROSS vim-plug not installed"
+    echo -e "  ${YELLOW}You can install via: curl -fLo ~/.vim/autoload/plug.vim --create-dirs \\
+       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim${NC}"
 fi
 
 # Check Git configuration
@@ -169,6 +170,11 @@ if [ $WORKING_ALIASES -eq ${#SAMPLE_ALIASES[@]} ]; then
 else
     echo -e "$CROSS Some aliases not loaded ($WORKING_ALIASES/${#SAMPLE_ALIASES[@]} working)"
     echo -e "  ${YELLOW}Restart your terminal or run: source ~/.$CURRENT_SHELL"rc"${NC}"
+    if [ "$CURRENT_SHELL" = "zsh" ]; then
+        echo -e "  ${YELLOW}Zsh users can also: source ~/.zshrc${NC}"
+    elif [ "$CURRENT_SHELL" = "bash" ]; then
+        echo -e "  ${YELLOW}Bash users can also: source ~/.bash_profile${NC}"
+    fi
 fi
 
 # Summary

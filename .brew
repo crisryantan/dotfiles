@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+# LEGACY: This script contains outdated Homebrew commands and casks.
+# To avoid accidental execution, it now requires an explicit --legacy flag.
+
+if [ "$1" != "--legacy" ]; then
+    echo "This script is legacy and potentially destructive on modern macOS."
+    echo "If you really want to run it, pass --legacy, e.g.:"
+    echo "  $0 --legacy"
+    exit 1
+fi
+
 # Make sure we’re using the latest Homebrew
 brew update
 
@@ -14,19 +24,19 @@ brew install findutils
 # Install Bash 4
 brew install bash
 
-# Install wget with IRI support
-brew install wget --enable-iri
+# Install wget
+brew install wget
 
 # Install RingoJS and Narwhal
 # Note that the order in which these are installed is important; see http://git.io/brew-narwhal-ringo.
 brew install ringojs
 brew install narwhal
 
-# Install more recent versions of some OS X tools
-brew tap homebrew/dupes
-brew install homebrew/dupes/grep
-brew tap josegonzalez/homebrew-php
-brew install php55
+# Legacy taps below are likely removed in modern Homebrew; keeping for reference
+# brew tap homebrew/dupes
+# brew install homebrew/dupes/grep
+# brew tap josegonzalez/homebrew-php
+# brew install php55
 
 # These two formulae didn’t work well last time I tried them:
 #brew install homebrew/dupes/vim
@@ -46,15 +56,14 @@ brew install tree
 brew install webkit2png
 brew install zopfli
 
-brew tap homebrew/versions
-brew install lua52
+# brew tap homebrew/versions
+# brew install lua52
 
-# Install native apps
-brew tap phinze/homebrew-cask
-brew install brew-cask
+# Install native apps (modern Homebrew has cask built-in)
+# brew install --cask <app>
 
 function installcask() {
-	brew cask install "${@}" 2> /dev/null
+	brew install --cask "${@}" 2> /dev/null
 }
 
 installcask dropbox

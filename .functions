@@ -85,29 +85,32 @@ function dataurl() {
 	echo "data:${mimeType};base64,$(openssl base64 -in "$1" | tr -d '\n')"
 }
 
-# Create a git.io short URL
+# Create a git.io short URL (DEPRECATED)
 function gitio() {
-	if [ -z "${1}" -o -z "${2}" ]; then
-		echo "Usage: \`gitio slug url\`"
-		return 1
-	fi
-	curl -i http://git.io/ -F "url=${2}" -F "code=${1}"
+	# git.io is deprecated and no longer accepts new URLs.
+	echo "ERROR: git.io URL shortener is deprecated and no longer accepts new URLs."
+	echo "Use an alternative URL shortener (e.g., bit.ly) instead."
+	return 1
 }
 
 # Start an HTTP server from a directory, optionally specifying the port
 function server() {
 	local port="${1:-8000}"
 	sleep 1 && open "http://localhost:${port}/" &
-	# Set the default Content-Type to `text/plain` instead of `application/octet-stream`
-	# And serve everything as UTF-8 (although not technically correct, this doesn’t break anything for binary files)
-	python -c $'import SimpleHTTPServer;\nmap = SimpleHTTPServer.SimpleHTTPRequestHandler.extensions_map;\nmap[""] = "text/plain";\nfor key, value in map.items():\n\tmap[key] = value + ";charset=UTF-8";\nSimpleHTTPServer.test();' "$port"
+	# Prefer Python 3's http.server; fallback to Python 2 SimpleHTTPServer
+	if command -v python3 > /dev/null 2>&1; then
+		python3 -m http.server "${port}"
+	else
+		python -m SimpleHTTPServer "${port}"
+	fi
 }
 
 # Start a PHP server from a directory, optionally specifying the port
 # (Requires PHP 5.4.0+.)
 function phpserver() {
 	local port="${1:-4000}"
-	local ip=$(ipconfig getifaddr en1)
+	# Determine default interface IP; fallback to localhost
+	local ip=$(ipconfig getifaddr $(route get default 2>/dev/null | grep 'interface:' | awk '{print $2}') 2>/dev/null || echo "127.0.0.1")
 	sleep 1 && open "http://${ip}:${port}/" &
 	php -S "${ip}:${port}"
 }
@@ -124,10 +127,18 @@ function gz() {
 # Syntax-highlight JSON strings or files
 # Usage: `json '{"foo":42}'` or `echo '{"foo":42}' | json`
 function json() {
-	if [ -t 0 ]; then # argument
-		python -mjson.tool <<< "$*" | pygmentize -l javascript
-	else # pipe
-		python -mjson.tool | pygmentize -l javascript
+	if command -v python3 > /dev/null 2>&1; then
+		if [ -t 0 ]; then # argument
+			python3 -m json.tool <<< "$*" | pygmentize -l javascript
+		else # pipe
+			python3 -m json.tool | pygmentize -l javascript
+		fi
+	else
+		if [ -t 0 ]; then # argument
+			python -mjson.tool <<< "$*" | pygmentize -l javascript
+		else # pipe
+			python -mjson.tool | pygmentize -l javascript
+		fi
 	fi
 }
 

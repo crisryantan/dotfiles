@@ -85,13 +85,7 @@ main() {
         fi
     fi
     
-    # Fix Vim issues
-    print_info "Checking Vim configuration..."
-    if [ -f "./scripts/vim-fixes.sh" ]; then
-        ./scripts/vim-fixes.sh
-    else
-        print_warning "Vim fixes script not found, skipping"
-    fi
+    # Editor setup is now handled via minimal configs and vim-plug in .dep.sh
     
     # Run health check
     print_info "Running health check..."
@@ -188,17 +182,7 @@ EOF
     print_success "Zsh configuration added"
 }
 
-# This function is deprecated - we now use scripts/vim-fixes.sh instead
-# Kept for backward compatibility
-fix_vim_issues() {
-    if [ -f "./scripts/vim-fixes.sh" ]; then
-        ./scripts/vim-fixes.sh
-    elif [ -f "./fix-vim-issues.sh" ]; then
-        ./fix-vim-issues.sh
-    else
-        print_warning "No Vim fixes script found"
-    fi
-}
+ 
 
 # Run main installation
 main "$@" 
