@@ -81,8 +81,8 @@ _z() {
     # Remove duplicates and sort
     dirs=($(printf '%s\n' "${dirs[@]}" | sort -u))
     
-    # Complete with directory names
-    _describe 'directories' dirs
+    # Complete with directory names using proper completion
+    compadd -a dirs
 }
 
 # Register completion for z command
