@@ -58,6 +58,9 @@ The `install.sh` script will:
 - Copy dotfiles to your home directory
 - Fix common compatibility issues
 - Set up your terminal prompt
+- **Automatically configure zsh** (no manual steps needed!)
+- **Reload shell configuration** immediately
+- **Verify installation** with health check
 
 ### Manual Install
 
@@ -77,9 +80,11 @@ cd ~/.dotfiles
 
 ### For Zsh Users
 
-If you're using zsh (default on modern macOS), the installer will automatically configure it to work with these dotfiles.
+If you're using zsh (default on modern macOS), the installer will **automatically** configure it to work with these dotfiles. No manual steps required!
 
-To manually add the configuration, append the contents of `.zshrc.template` to your `~/.zshrc`:
+> **Note**: The installation script now automatically configures zsh, reloads the configuration, and verifies everything is working. You should not need to manually run any additional commands.
+
+If you need to manually add the configuration (not recommended), append the contents of `.zshrc.template` to your `~/.zshrc`:
 
 ```bash
 cat ~/.dotfiles/.zshrc.template >> ~/.zshrc
@@ -103,6 +108,21 @@ The script will check for:
 - And more!
 
 ## Troubleshooting
+
+### Terminal Not "Pimped" After Installation
+
+If your terminal doesn't seem to have the dotfiles configuration after running `./install.sh`:
+
+1. **Check if you're using zsh**: Run `echo $SHELL` - if it shows `/bin/zsh`, the installer should have configured it automatically
+2. **Run the health check**: `./scripts/healthcheck.sh` to see what's missing
+3. **Restart your terminal**: Close and reopen your terminal application
+4. **If still not working**: The installer now automatically handles this, but you can manually run:
+   ```bash
+   cat ~/.dotfiles/.zshrc.template >> ~/.zshrc
+   source ~/.zshrc
+   ```
+
+> **This issue has been fixed in the latest version** - the installer now automatically configures zsh and reloads the configuration.
 
 ### Git Commit Vim Error (E1208)
 

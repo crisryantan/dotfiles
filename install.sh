@@ -77,6 +77,12 @@ main() {
     if [ "$USER_SHELL" = "zsh" ]; then
         print_info "Configuring for zsh..."
         setup_zsh
+        
+        # Automatically reload zsh configuration
+        print_info "Reloading zsh configuration..."
+        if [ -f "$HOME/.zshrc" ]; then
+            source "$HOME/.zshrc" 2>/dev/null || print_warning "Could not reload .zshrc automatically"
+        fi
     fi
     
     # Fix Vim issues
@@ -97,8 +103,21 @@ main() {
         print_warning "Health check script not found, skipping"
     fi
     
-    print_success "Installation complete!"
-    print_info "Please restart your terminal or run: source ~/.$USER_SHELL"rc
+    # Final verification
+    print_info "Verifying installation..."
+    if [ -f "./scripts/healthcheck.sh" ]; then
+        if ./scripts/healthcheck.sh | grep -q "Everything looks good"; then
+            print_success "Installation complete and verified! 🎉"
+            print_info "Your terminal is now properly configured with dotfiles."
+        else
+            print_warning "Installation completed but some issues detected."
+            print_info "Run './scripts/healthcheck.sh' to see details."
+        fi
+    else
+        print_success "Installation complete!"
+    fi
+    
+    print_info "You can now use your enhanced terminal with aliases, z command, and git integration!"
 }
 
 # Setup zsh to work with bash dotfiles
