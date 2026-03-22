@@ -82,8 +82,39 @@ install_vim_plug() {
     fi
 }
 
+# Install gnupg and pinentry-mac for signed commits
+install_gpg() {
+    if command -v gpg > /dev/null 2>&1; then
+        print_info "gnupg already installed"
+    else
+        if command -v brew > /dev/null 2>&1; then
+            print_info "Installing gnupg and pinentry-mac..."
+            brew install gnupg pinentry-mac
+            print_success "gnupg installed"
+        else
+            print_warning "Homebrew not found; skipping gnupg installation"
+            return
+        fi
+    fi
+
+    # Configure gpg-agent to use pinentry-mac
+    mkdir -p "$HOME/.gnupg"
+    chmod 700 "$HOME/.gnupg"
+    if ! grep -q "pinentry-program" "$HOME/.gnupg/gpg-agent.conf" 2>/dev/null; then
+        echo "pinentry-program /opt/homebrew/bin/pinentry-mac" >> "$HOME/.gnupg/gpg-agent.conf"
+        print_success "gpg-agent configured with pinentry-mac"
+    fi
+    if ! grep -q "use-agent" "$HOME/.gnupg/gpg.conf" 2>/dev/null; then
+        echo "use-agent" >> "$HOME/.gnupg/gpg.conf"
+    fi
+    gpgconf --kill gpg-agent 2>/dev/null || true
+}
+
 # Main installation
 print_info "Installing dependencies..."
+
+# Install gnupg for signed commits
+install_gpg
 
 # Install z
 install_z
