@@ -11,7 +11,7 @@ git config --global user.email "$GIT_AUTHOR_EMAIL"
 # set PGP keyring if there is one for signed commits
 #
 #         List down available keys          NR==1 is the header
-GPG_ID="$(gpg --list-keys | grep pub | awk 'NR==2{print $2}' | sed -e 's/^.*\///')"
+GPG_ID="$(command -v gpg &>/dev/null && gpg --list-keys 2>/dev/null | grep pub | awk 'NR==2{print $2}' | sed -e 's/^.*\///' || echo '')"
 
 # Check if we get valid value
 #  then set user.signkey
